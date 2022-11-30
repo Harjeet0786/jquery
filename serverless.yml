@@ -1,0 +1,36 @@
+service: nodejs-serverless-boilerplate
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+functions:
+  app:
+    handler: index.handler
+    events:
+      - http: ANY /
+      - http: "ANY {proxy+}"
+
+  connectionHandler:
+    handler: handler/handler.connectionHandler
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+  defaultHandler:
+    handler: handler/handler.defaultHandler
+    events:
+      - websocket: $default #simple event definition without extra route property
+  joinHandler:
+    handler: handler/handler.joinHandler
+    events:
+      - websocket:
+          route: join
